@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(caret)\nlibrary(data.table)\nlibrary(rpart)\nlibrary(rpart.plot)\nlibrary(RColorBrewer)\nlibrary(rattle)\nlibrary(randomForest)\nlibrary(knitr)\nlibrary(e1071)\n\n#loading data\npath <- getwd()\ntraining.path <- file.path(path, \"pml-training.csv\")\ntesting.path <- file.path(path,\"pml-testing.csv\")\ntraining.data <- fread(training.path)\ntesting.data <- fread(testing.path)\n\n#processing data\n## sub.train and sub.test\ninTrain <- createDataPartition(y=training.data$classe, p=0.6, list=FALSE)\nmyTraining <- training.data[inTrain, ]\nmyTesting <- training.data[-inTrain, ]\ndim(myTraining); dim(myTesting)\n##transfer inorder to clean\nmyTraining <- as.data.frame(myTraining)\nmyTesting <- as.data.frame(myTesting)\n##clean var with more than 55% NAs\ntraining.minusNA <- myTraining \nfor(i in 1:length(myTraining)) { \n  if( sum( is.na( myTraining[, i] ) ) /nrow(myTraining) >= .6 ) { \n    for(j in 1:length(training.minusNA)) {\n      if( length( grep(names(myTraining[i]), names(training.minusNA)[j]) ) ==1)  { \n        training.minusNA <- training.minusNA[ , -j] \n      }   \n    } \n  }\n}\nmyTraining <- training.minusNA\nrm(training.minusNA)\n##remove some personal and nonrelative vars\nmyTraining <- myTraining[,8:length(myTraining)]\n##remove NearZeroVariance variables\nnzv.tr <- nearZeroVar(myTraining, saveMetrics=TRUE)\nmyTraining <- myTraining[,nzv.tr$nzv==FALSE]\n\n\n##synchronizing processing\nmyTesting <- myTesting[colnames(myTraining)]\ntesting.data <- as.data.frame(testing.data)\ntesting.data <- testing.data[colnames(myTraining[, -53])]             \ndim(myTesting);dim(testing.data)\n\n##coerce the data into the same types\nfor (i in 1:length(testing.data) ) {\n  for(j in 1:length(myTraining)) {\n    if( length( grep(names(myTraining[i]), names(testing.data)[j]) ) == 1)  {\n      class(testing.data[j]) <- class(myTraining[i])\n    }      \n  }      \n}\n\n##for random forest\nmyTraining$classe = as.factor(myTraining$classe)\nmyTesting$classe = as.factor(myTesting$classe)\n\n\n",
+    "created" : 1490238364769.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2990977876",
+    "id" : "5B8E37C5",
+    "lastKnownWriteTime" : 1490331172,
+    "last_content_update" : 1490331172393,
+    "path" : "D:/MicFile/百度云同步盘/R_Workspace/Programs in Coursera/Practical Machine Learning/Final Project/Data Loading and Cleaning.R",
+    "project_path" : "Data Loading and Cleaning.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

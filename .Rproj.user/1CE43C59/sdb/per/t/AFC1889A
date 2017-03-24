@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#pre with decision tree\nset.seed(12345)\nmodFitA1 <- rpart(classe ~ ., data=myTraining, method=\"class\")\nfancyRpartPlot(modFitA1, tweak = 2)\n# rpart.plot(modFitA1)\n# prp(modFitA1, main=\"An Example\",\n#     type=1, fallen=T, branch=.3, round=0, leaf.round=9,\n#     clip.right.labs=F, under.cex=1,\n#     box.palette=\"GnYlRd\",\n#     prefix=\"ozone\\n\", branch.col=\"gray\", branch.lwd=2,\n#     extra=101, under=T, lt=\" < \", ge=\" >= \", cex.main=1.5,tweak=1.2,gap = 0)\n\npredictionsA1 <- predict(modFitA1, myTesting, type = \"class\")\ncmtree <- confusionMatrix(predictionsA1, myTesting$classe)\ncmtree\nplot(cmtree$table, col = cmtree$byClass, main = paste(\"Decision Tree Confusion Matrix: Accuracy =\", round(cmtree$overall['Accuracy'], 4)))\n\n#pre with random forest\nset.seed(12345)\n\nmodFitB1 <- randomForest(classe ~ ., data=myTraining, method = \"Class\")\npredictionB1 <- predict(modFitB1, myTesting, type = \"class\")\ncmrf <- confusionMatrix(predictionB1, myTesting$classe)\ncmrf\nplot(modFitB1)\nplot(cmrf$table, col = cmtree$byClass, main = paste(\"Random Forest Confusion Matrix: Accuracy =\", round(cmrf$overall['Accuracy'], 4)))\n\n#pre with SVM\n# linear SVM\nsvmfit <- svm(classe ~ ., data = myTraining, kernel = \"linear\", scale = T) # linear svm, scaling turned OFF\nprint(svmfit)\ncompareTable <- table (myTraining$classe, predict(svmfit));compareTable  # tabulate\nmean(myTraining$classe != predict(svmfit)) # 20.66% misclassification error\n\n#then the random forest model is the best model\nbestfitmodel <- modFitB1\n\n#Predicting Results on the Test Data\npredictionB2 <- predict(bestfitmodel, testing.data, type = \"class\")\npredictionB2\n\n",
+    "created" : 1490242457463.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2854330971",
+    "id" : "AFC1889A",
+    "lastKnownWriteTime" : 1490331802,
+    "last_content_update" : 1490331802292,
+    "path" : "D:/MicFile/百度云同步盘/R_Workspace/Programs in Coursera/Practical Machine Learning/Final Project/Prediction.R",
+    "project_path" : "Prediction.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
